@@ -4,18 +4,18 @@
 {% block sitetitle %}Sales{% endblock %}
 {% block heading %}{% endblock %}
 {% block maincontent %}
+{% verbatim %}
 <div id="app">
-  [[ message ]]
+  {{ message }}
 </div>
-{% endblock %} 
+{% endverbatim %}
+{% endblock %}
 {% block extrajs %}
-<!--<script src="{% static 'vendor/vue.js' %}"></script>-->
-<script src="https://unpkg.com/vue"></script>
-<script src="https://unpkg.com/vuex"></script>
+<script src="{% static 'registration/js/vue.js' %}"></script>
+
 <script>
 var app = new Vue({
   el: '#app',
-  delimiters: ['[[', ']]'],
   data: {
     message: 'Hello Vue!'
   }
