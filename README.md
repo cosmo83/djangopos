@@ -1,0 +1,2 @@
+# djangopos
+Django Based POS
