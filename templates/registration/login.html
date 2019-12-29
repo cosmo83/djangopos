@@ -1,0 +1,63 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>SB Admin - Login</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="{% static 'registration/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
+
+  <!-- Custom styles for this template-->
+  <link href="{% static 'registration/css/sb-admin.css' %}" rel="stylesheet">
+
+</head>
+
+<body class="bg-dark">
+
+  <div class="container">
+    <div class="card card-login mx-auto mt-5">
+      <div class="card-header">Login</div>
+      <div class="card-body">
+        <form class="user" method="post">
+	  {% csrf_token %}
+          <div class="form-group">
+            <div class="form-label-group">
+              <input type="text" id="{{form.username.id_for_label}}" class="form-control" placeholder="Username" name="{{ form.username.html_name }}" required="required" autofocus="autofocus">
+              <label for="{{form.username.id_for_label}}">Username</label>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="form-label-group">
+              <input type="password" id="{{form.password.id_for_label}}" name="{{ form.password.html_name }}"{{form.password.id_for_label}} class="form-control" placeholder="Password" required="required">
+              <label for="{{form.password.id_for_label}}">Password</label>
+            </div>
+          </div>
+          <input type="submit" class="btn btn-primary btn-block">
+        </form>
+        <div class="text-center">
+          <br/>
+          <a class="d-block small" href="#">Forgot Password?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="{% static 'registration/vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'registration/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="{% static 'registration/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+</body>
+
+</html>
+
