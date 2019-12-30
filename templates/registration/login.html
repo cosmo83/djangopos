@@ -1,63 +1,89 @@
+
 {% load static from staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <title>AdminLTE 3 | Log in</title>
+  <!-- Tell the browser to be responsive to screen width -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>SB Admin - Login</title>
-
-  <!-- Custom fonts for this template-->
-  <link href="{% static 'registration/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css">
-
-  <!-- Custom styles for this template-->
-  <link href="{% static 'registration/css/sb-admin.css' %}" rel="stylesheet">
-
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{% static 'adminlte/plugins/fontawesome-free/css/all.min.css'%}">
+  <!-- Ionicons -->
+  <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+  <!-- icheck bootstrap -->
+  <link rel="stylesheet" href="{% static 'adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'adminlte/dist/css/adminlte.min.css' %}">
+  <!-- Google Font: Source Sans Pro -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
-
-<body class="bg-dark">
-
-  <div class="container">
-    <div class="card card-login mx-auto mt-5">
-      <div class="card-header">Login</div>
-      <div class="card-body">
-        <form class="user" method="post">
-	  {% csrf_token %}
-          <div class="form-group">
-            <div class="form-label-group">
-              <input type="text" id="{{form.username.id_for_label}}" class="form-control" placeholder="Username" name="{{ form.username.html_name }}" required="required" autofocus="autofocus">
-              <label for="{{form.username.id_for_label}}">Username</label>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="form-label-group">
-              <input type="password" id="{{form.password.id_for_label}}" name="{{ form.password.html_name }}"{{form.password.id_for_label}} class="form-control" placeholder="Password" required="required">
-              <label for="{{form.password.id_for_label}}">Password</label>
-            </div>
-          </div>
-          <input type="submit" class="btn btn-primary btn-block">
-        </form>
-        <div class="text-center">
-          <br/>
-          <a class="d-block small" href="#">Forgot Password?</a>
-        </div>
-      </div>
-    </div>
+<body class="hold-transition login-page">
+<div class="login-box">
+  <div class="login-logo">
+    <a href="../../index2.html"><b>Admin</b>LTE</a>
   </div>
+  <!-- /.login-logo -->
+  <div class="card">
+    <div class="card-body login-card-body">
+      <p class="login-box-msg">Sign in to start your session</p>
 
-  <!-- Bootstrap core JavaScript-->
-  <script src="{% static 'registration/vendor/jquery/jquery.min.js' %}"></script>
-  <script src="{% static 'registration/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+      <form class="user" method="post">
+          {% csrf_token %}
+        <div class="input-group mb-3">
+          <input type="text" id="{{form.username.id_for_label}}" class="form-control" placeholder="Username" name="{{ form.username.html_name }}" required="required" autofocus="autofocus">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-envelope"></span>
+            </div>
+          </div>
+        </div>
+        <div class="input-group mb-3">
+          <input type="password" id="{{form.password.id_for_label}}" name="{{ form.password.html_name }}"{{form.password.id_for_label}} class="form-control" placeholder="Password" required="required">
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-lock"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <div class="icheck-primary">
+              <input type="checkbox" id="remember">
+              <label for="remember">
+                Remember Me
+              </label>
+            </div>
+          </div>
+          <!-- /.col -->
+          <div class="col-4">
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </div>
+          <!-- /.col -->
+        </div>
+      </form>
 
-  <!-- Core plugin JavaScript-->
-  <script src="{% static 'registration/vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+      <p class="mb-1">
+        <a href="forgot-password.html">I forgot my password</a>
+      </p>
+      <p class="mb-0">
+        <a href="register.html" class="text-center">Register a new membership</a>
+      </p>
+    </div>
+    <!-- /.login-card-body -->
+  </div>
+</div>
+<!-- /.login-box -->
+
+<!-- jQuery -->
+<script src="{% static 'adminlte/plugins/jquery/jquery.min.js' %}"></script>
+<!-- Bootstrap 4 -->
+<script src="{% static 'adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<!-- AdminLTE App -->
+<script src="{% static 'adminlte/dist/js/adminlte.min.js' %}"></script>
 
 </body>
-
 </html>
-
