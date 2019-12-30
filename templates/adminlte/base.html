@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="{% static 'adminlte/dist/css/adminlte.min.css' %}">
   <!-- Google Font: Source Sans Pro -->
   <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  {% block extrajshead %} {% endblock %}
 </head>
 <body class="hold-transition sidebar-mini">
 <!-- Site wrapper -->
@@ -132,12 +133,13 @@
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <div class="container-fluid">
-        
+
       </div><!-- /.container-fluid -->
     </section>
 
     <!-- Main content -->
     <section class="content">
+
       {% block maincontent %}
 
       {% endblock %}
@@ -169,5 +171,6 @@
 <script src="{% static 'adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static 'adminlte/dist/js/adminlte.min.js' %}"></script>
+{%block extrascript %}{% endblock %}
 </body>
 </html>

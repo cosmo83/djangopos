@@ -37,11 +37,11 @@ class Sale(TimeStampedModel):
     employee = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.CASCADE)
     store = models.ForeignKey(Store,on_delete=models.CASCADE, limit_choices_to={'is_sale_location':True,'is_deleted':False})
-    
+
     status = models.IntegerField("Sale Status",default=False,choices=sale_status)
 
 
-    
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100,
@@ -50,10 +50,12 @@ class Product(models.Model):
     code = models.CharField("UPC Code",max_length=50, unique=True, null=True, blank=True)
     hsncode = models.CharField("HSN Code",max_length=20)
     sell_price = models.DecimalField(max_digits=7, decimal_places=2)
-     
+
 class SaleLine(models.Model):
     saleorder = models.ForeignKey(Sale,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    is_product_serial = models.BooleanField(default=False)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
     discount = models.DecimalField(max_digits=7, decimal_places=2,default=0)
+    
