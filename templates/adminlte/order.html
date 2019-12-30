@@ -1,0 +1,52 @@
+{% extends "adminlte/base.html" %}
+{% load static from staticfiles %}
+{% block title %}Smart POS - Sales Order{% endblock %}
+{% block sitetitle %}Sales Screen{% endblock %}
+{% block heading %}{% endblock %}
+{% block maincontent %}
+    <div class="row">
+       <div class="col-md-8">
+         <div class="card card-primary">
+           <div class="card-header">
+             <!-- Search form -->
+             <h3 class="card-title">Product Search</h3>
+
+               <div class="card-tools">
+                 <div class="input-group input-group-sm" style="width: 150px;">
+                   <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                   <div class="input-group-append">
+                     <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+                   </div>
+                 </div>
+               </div>
+           </div>
+
+           <div class="card-body table-responsive p-0" style="height: 450px;">
+                           <table class="table table-head-fixed">
+                             <thead>
+                               <tr>
+                                 <th>Name</th>
+                                 <th>Serial / Batch Number</th>
+                                 <th>Store</th>
+                                 <th>Store Inventory</th>
+                                 <th>Add to Order</th>
+                               </tr>
+                             </thead>
+
+                           </table>
+                         </div>
+
+           </div>
+        </div>
+
+
+     <div class="col-md-4">
+       <div class="card card-warning">
+         <div class="card-header">
+           <h3 class="card-title">Order Screen</h3>
+         </div>
+       </div>
+     </div>
+
+{% endblock %}

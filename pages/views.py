@@ -13,7 +13,6 @@ class homePage2View(TemplateView):
 class homePage3View(TemplateView):
         template_name = 'adminlte/dashboard3.html'
 
-class SalesPageView(TemplateView):
-        template_name = 'adminlte/order.html'
+
 
 # Create your views here.
