@@ -22,17 +22,22 @@ def validate_product_name(prodname):
 
 class Store(Organization):
         code = models.CharField("Store ID",max_length=10)
-        addr = models.TextField("Address")
+        addr1 = models.CharField("Address 1",max_length=200)
+        addr2 = models.CharField("Address 2",max_length=200)
+        addr3 = models.CharField("Address 3",max_length=200)
         city = models.CharField("City",max_length=100)
         state = models.CharField("State",max_length=80,choices=state_choices)
         pincode = models.CharField("Pin-Code",max_length=6)
-        gstn = models.CharField("GSTN Number",max_length=20,blank=True)
         is_sale_location = models.BooleanField(default=True)
-        is_deleted = models.BooleanField(default=False)
+
+        def __str__(self):
+            return self.code+"-"+self.name
+
 
         class Meta:
           verbose_name = 'Storage Location'
           verbose_name_plural = 'Storage Locations'
+
 
 class Sale(TimeStampedModel):
     employee = models.ForeignKey(settings.AUTH_USER_MODEL,
@@ -54,8 +59,8 @@ class TaxesGST(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=100,
-                            validators=[validate_product_name])
-    item_code = models.CharField("Item Code",max_length=50,primary_key=True)
+                            validators=[validate_product_name],db_index=True)
+    item_code = models.CharField("Item Code",max_length=50,primary_key=True,db_index=True)
     code = models.CharField("UPC Code",max_length=50, null=True, blank=True)
     hsncode = models.ForeignKey(TaxesGST,on_delete=models.CASCADE)
     is_product_serial = models.BooleanField(default=False)
@@ -105,7 +110,6 @@ class PriceList(models.Model):
 class SaleLine(models.Model):
     saleorder = models.ForeignKey(Sale,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    is_product_serial = models.BooleanField(default=False)
     quantity = models.IntegerField()
     price = models.DecimalField(max_digits=7, decimal_places=2)
     discount = models.DecimalField(max_digits=7, decimal_places=2,default=0)

@@ -13,9 +13,11 @@ class TaxesAdmin(ImportExportModelAdmin):
 class ProductAdmin(ImportExportModelAdmin):
     pass
 
+@admin.register(Store)
+class StoreAdmin(ImportExportModelAdmin):
+    pass
 # Register your models here.
 
-admin.site.register(Store)
 admin.site.register(Inventory)
 admin.site.register(PriceList)
 
