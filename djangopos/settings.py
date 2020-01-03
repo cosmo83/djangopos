@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'pos.apps.PosConfig',
     'django_extensions',
+    'import_export'
 ]
 
 REST_FRAMEWORK = {
@@ -137,3 +138,4 @@ STATIC_ROOT = './static/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 ORGS_SLUGFIELD = 'django_extensions.db.fields.AutoSlugField'
+IMPORT_EXPORT_USE_TRANSACTIONS = True
