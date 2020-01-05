@@ -8,7 +8,7 @@ import re
 state_choices = (("Andhra Pradesh","Andhra Pradesh"),("Arunachal Pradesh ","Arunachal Pradesh "),("Assam","Assam"),("Bihar","Bihar"),("Chhattisgarh","Chhattisgarh"),("Goa","Goa"),("Gujarat","Gujarat"),("Haryana","Haryana"),("Himachal Pradesh","Himachal Pradesh"),("Jammu and Kashmir ","Jammu and Kashmir "),("Jharkhand","Jharkhand"),("Karnataka","Karnataka"),("Kerala","Kerala"),("Madhya Pradesh","Madhya Pradesh"),("Maharashtra","Maharashtra"),("Manipur","Manipur"),("Meghalaya","Meghalaya"),("Mizoram","Mizoram"),("Nagaland","Nagaland"),("Odisha","Odisha"),("Punjab","Punjab"),("Rajasthan","Rajasthan"),("Sikkim","Sikkim"),("Tamil Nadu","Tamil Nadu"),("Telangana","Telangana"),("Tripura","Tripura"),("Uttar Pradesh","Uttar Pradesh"),("Uttarakhand","Uttarakhand"),("West Bengal","West Bengal"),("Andaman and Nicobar Islands","Andaman and Nicobar Islands"),("Chandigarh","Chandigarh"),("Dadra and Nagar Haveli","Dadra and Nagar Haveli"),("Daman and Diu","Daman and Diu"),("Lakshadweep","Lakshadweep"),("National Capital Territory of Delhi","National Capital Territory of Delhi"),("Puducherry","Puducherry"))
 
 sale_status = ((0,"Sale Completed"),(1,"Sale in Progress"),(2,"Sale Cancelled"))
-
+inv_status = ((0,"In Store"),(1,"Sold"),(2,"In Transit"))
 pricelist_type=(("sale","Sale"),("cost","Cost"))
 def validate_product_name(prodname):
     regex_string = r'^\w[\w ]*$'
@@ -21,7 +21,7 @@ def validate_product_name(prodname):
 
 
 class Store(Organization):
-        code = models.CharField("Store ID",max_length=10)
+        code = models.CharField("Store ID",max_length=10,unique=True)
         addr1 = models.CharField("Address 1",max_length=200)
         addr2 = models.CharField("Address 2",max_length=200)
         addr3 = models.CharField("Address 3",max_length=200)
@@ -49,12 +49,11 @@ class Sale(TimeStampedModel):
 
 
 class TaxesGST(models.Model):
-    hsncode = models.CharField("HSN Code",max_length=20)
+    hsnname = models.CharField("HSN Code",max_length=20)
     taxrate = models.DecimalField(max_digits=4,decimal_places=2)
 
     def __str__(self):
-        return self.hsncode
-
+        return self.hsnname
 
 
 class Product(models.Model):
@@ -67,6 +66,14 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    def hsnname(self):
+        return self.hsncode.hsnname
+
+    def hsnigst(self):
+        return self.hsncode.taxrate
+
+
     #If the product is not having a serial number, its assumed to have a batch number. If the batchnumber = null, then no batches
 
 class Inventory(models.Model):
@@ -74,6 +81,7 @@ class Inventory(models.Model):
     store = models.ForeignKey(Store,on_delete = models.CASCADE)
     count = models.DecimalField(max_digits=7,decimal_places=2)
     serialbatchnumber = models.CharField("Serial / Batch Number",max_length=50,null=True,blank=True)
+    status = models.IntegerField("Status",choices=inv_status)
     class Meta:
       verbose_name = 'Inventory'
       verbose_name_plural = 'Inventory Lines'
@@ -91,6 +99,12 @@ class Inventory(models.Model):
                 return prices[0].price
         else:
             return PriceList.objects.filter(product=self.product,type='sale',serialbatchnumber=None)[0].price
+
+    def productname(self):
+        return self.product.name
+
+    def storename(self):
+        return self.store.name
 
     def __str__(self):
         return self.product.name+"-"+self.store.name

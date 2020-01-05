@@ -42,8 +42,16 @@ INSTALLED_APPS = [
     'crispy_forms',
     'pos.apps.PosConfig',
     'django_extensions',
-    'import_export'
+    'import_export',
+    'django_elasticsearch_dsl',
+    'django_elasticsearch_dsl_drf',
 ]
+
+ELASTICSEARCH_DSL = {
+    'default': {
+        'hosts': 'localhost:9200'
+    },
+}
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

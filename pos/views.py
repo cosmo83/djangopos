@@ -3,16 +3,18 @@ from .models import Sale,SaleLine, Inventory,Product
 # Create your views here.
 from rest_framework import viewsets
 
-from .serializers import SaleSerializer,SaleLineSerializer,InvSerializer
+from .serializers import SaleSerializer,SaleLineSerializer,InvSerializer, InvDocSerializer
 from django.views.generic import TemplateView
-from django.http import JsonResponse
+from django.http import HttpResponse
+import json
+from .documents import InvDocument
 
 def productsearch_list(request,searchcode):
 	if request.method == 'GET':
-		products = Product.objects.filter(name__icontains=searchcode)
-		inventorylines = Inventory.objects.filter(product__in=products)
-		serializer = InvSerializer(inventorylines,many=True)
-		return JsonResponse(serializer.data,safe=False)
+		invlines = InvDocument.search().query("multi_match",query=searchcode,fields=['product.name','serialbatchnumber'])
+		serializer = InvDocSerializer(invlines[0:invlines.count()],many=True)
+		return HttpResponse(json.dumps(serializer.data))
+
 
 
 class InventoryViewSet(viewsets.ModelViewSet):
