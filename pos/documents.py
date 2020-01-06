@@ -1,7 +1,7 @@
 from elasticsearch_dsl import analyzer
 from django_elasticsearch_dsl import Document, Index, fields
 from django_elasticsearch_dsl.registries import registry
-from .models import Inventory, Product
+from .models import Inventory, Product,Store
 
 pos_index = Index('pos')
 
@@ -16,6 +16,19 @@ html_strip = analyzer(
     filter=["lowercase", "stop", "snowball"],
     char_filter=["html_strip"]
 )
+
+@registry.register_document
+class StoreDocument(Document):
+     # Location
+    location = fields.GeoPointField(attr='location_field_indexing')
+    class Django:
+        model = Store
+        fields = [
+            'name',
+            'code'
+        ]
+    class Index:
+        name="store"
 
 @registry.register_document
 class ProductDocument(Document):
@@ -35,13 +48,15 @@ class ProductDocument(Document):
 class InvDocument(Document):
 #     productname = fields.TextField()
      store = fields.ObjectField(properties={
-        'code': fields.TextField(),
-        'name': fields.TextField()
+        'name':fields.TextField(),
+        'code':fields.TextField(),
+        'location':fields.GeoPointField(attr='location_field_indexing')
      })
      product = fields.ObjectField(properties={
         'name': fields.TextField(),
         'hsnname': fields.TextField(),
         'hsnigst': fields.DoubleField(),
+        'item_code':fields.TextField(),
      })
      sale_price = fields.TextField()
 

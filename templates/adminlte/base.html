@@ -40,9 +40,22 @@
     <ul class="navbar-nav ml-auto">
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">
-          <span class="badge badge-warning navbar-badge">Select Store</span>
+          <i class="fas fa-store"></i>
+          <span class="badge badge-warning navbar-badge">{{storename}}</span>
         </a>
-      </li>
+
+      <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <span class="dropdown-item dropdown-header">Number of Stores:{{stores.count}}</span>
+
+        {% for store in stores %}
+        <div class="dropdown-divider"></div>
+        <a href="/switch/{{store.id}}" class="dropdown-item">
+          <i class="fas fa-store mr-2"></i> {{store.name}}
+          <span class="float-right text-muted text-sm">{{store.code}}</span>
+        </a>
+        {% endfor %}
+      </div>
+    </li>
       <!-- Notifications Dropdown Menu -->
       <li class="nav-item dropdown">
         <a class="nav-link" data-toggle="dropdown" href="#">

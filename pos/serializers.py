@@ -5,7 +5,7 @@ from .documents import InvDocument
 
 class InvDocSerializer(DocumentSerializer):
     product = serializers.SerializerMethodField()
-    storename = serializers.CharField()
+    store = serializers.SerializerMethodField()
     sale_price = serializers.FloatField()
     class Meta(object):
         fields =(
@@ -13,6 +13,10 @@ class InvDocSerializer(DocumentSerializer):
             'count'
         )
         document = InvDocument
+
+    def get_store(self,obj):
+        if(obj.store):
+            return {'name':obj.store.name}
 
     def get_product(self,obj):
         if(obj.product):

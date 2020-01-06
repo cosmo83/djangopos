@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Sale,SaleLine, Inventory,Product
+from .models import Sale,SaleLine, Inventory,Product,Store
 # Create your views here.
 from rest_framework import viewsets
 
@@ -8,6 +8,7 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse
 import json
 from .documents import InvDocument
+
 
 def productsearch_list(request,searchcode):
 	if request.method == 'GET':
@@ -33,4 +34,9 @@ class SaleLineViewSet(viewsets.ModelViewSet):
 
 
 class SalesPageView(TemplateView):
-        template_name = 'adminlte/order.html'
+    template_name = 'adminlte/order.html'
+    def get_context_data(self, **kwargs):
+       context = super().get_context_data(**kwargs)
+       context['storename']=Store.objects.get(id=self.request.session['store_id']).name
+       context['stores'] = Store.objects.filter(users=self.request.user.id)
+       return context

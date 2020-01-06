@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'pages.apps.PagesConfig',
     'rest_framework',
     'organizations',
     'crispy_forms',
@@ -47,6 +48,8 @@ INSTALLED_APPS = [
     'django_elasticsearch_dsl_drf',
 ]
 
+GEOPOSITION_GOOGLE_MAPS_API_KEY = "AIzaSyD314-K42HiRw7wPNJmsqLE4wJgxDVpgWA"
+GOOGLE_MAPS_API_KEY = 'AIzaSyD314-K42HiRw7wPNJmsqLE4wJgxDVpgWA'
 ELASTICSEARCH_DSL = {
     'default': {
         'hosts': 'localhost:9200'
