@@ -1,7 +1,9 @@
-from .models import Sale,SaleLine, Inventory
+from .models import Sale,SaleLine, Inventory,Customer
 from rest_framework import serializers
 from django_elasticsearch_dsl_drf.serializers import DocumentSerializer
 from .documents import InvDocument
+
+
 
 class InvDocSerializer(DocumentSerializer):
     product = serializers.SerializerMethodField()
@@ -34,6 +36,15 @@ class InvSerializer(serializers.ModelSerializer):
      class Meta:
          model=Inventory
          fields = ('productname','storename','count','serialbatchnumber','sale_price')
+
+class CustomerSerializer(serializers.ModelSerializer):
+    custname = serializers.CharField(source='name')
+    custphone = serializers.CharField(source='phonenumber')
+    custemail = serializers.CharField(source='email')
+
+    class Meta:
+        model=Customer
+        fields = ('custname','custphone','custemail')
 
 class SaleSerializer(serializers.ModelSerializer):
     class Meta:

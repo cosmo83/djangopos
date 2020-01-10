@@ -1,7 +1,7 @@
 from elasticsearch_dsl import analyzer
 from django_elasticsearch_dsl import Document, Index, fields
 from django_elasticsearch_dsl.registries import registry
-from .models import Inventory, Product,Store
+from .models import Inventory, Product,Store, PriceList, Customer
 
 pos_index = Index('pos')
 
@@ -16,6 +16,18 @@ html_strip = analyzer(
     filter=["lowercase", "stop", "snowball"],
     char_filter=["html_strip"]
 )
+
+@registry.register_document
+class CustomerDocument(Document):
+    class Django:
+        model = Customer
+        fields = [
+            'name',
+            'phonenumber',
+            'email'
+        ]
+    class Index:
+        name="customer"
 
 @registry.register_document
 class StoreDocument(Document):
@@ -67,5 +79,15 @@ class InvDocument(Document):
              'count',
              'status'
          ]
+         related_models = [Store,Product,PriceList]
+
+     def get_instances_from_related(self,related_instance):
+         if isinstance(related_instance,Store):
+             return related_instance.inventory_set.all()
+         if isinstance(related_instance,Product):
+             return related_instance.inventory_set.all()
+         if isinstance(related_instance,PriceList):
+             return related_instance.product.inventory_set.all()
+
      class Index:
          name="inventory"

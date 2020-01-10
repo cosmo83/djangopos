@@ -21,6 +21,10 @@ def validate_product_name(prodname):
                               "numbers and underscores or spaces. "
                               "The name cannot start with a space.")
 
+class Customer(models.Model):
+        name = models.CharField("Name",max_length=200)
+        phonenumber = models.CharField("Phone Number",max_length=12,unique=True)
+        email = models.CharField("Email Address",max_length=100,blank=True,null=True,default=True)
 
 class Store(Organization):
         code = models.CharField("Store ID",max_length=10,unique=True)

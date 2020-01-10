@@ -29,9 +29,10 @@
        data: {
          lines: [],
        },
+
        methods: {
          prodsearch: function(event){
-           fetch("/pos/api/productsearch/"+event.target.value+"/", {
+           fetch("/pos/api/productstoresearch/"+event.target.value+"/", {
              method: "get",
              credentials: "same-origin",
              headers: {
@@ -41,13 +42,90 @@
              }
            })
            .then(res => res.json())
-           .then((out) => { this.lines = out; });
+           .then((out) => { this.lines = out; })
+           setTimeout(() => this.refreshScreen(),200)
          },
-         greet: function(event,prodname){
-           alert(prodname)
+         addLinetoOrder: function(event,line){
+           //vm.lines.splice(line,1)
+
+           copyline= Vue.util.extend({}, line)
+
+           //this.refreshScreen()
+           let found=false;
+           for(var i=0;i<vm1.orderlines.length;i++){
+             if((copyline.product.name == vm1.orderlines[i].product.name)&&(copyline.serialbatchnumber == vm1.orderlines[i].serialbatchnumber)){
+               vm1.orderlines[i].count++;
+               line.count--;
+               found=true;
+             }
+           }
+
+          if(!found){
+             copyline.count=1
+             //console.log("Order Screen Length Before Adding "+vm1.orderlines.length)
+             vm1.orderlines.push(copyline);
+             line.count--;
+             //console.log("Order Screen Length After Adding "+vm1.orderlines.length)
+           }
+
+            setTimeout(() => this.clearCount(),200)
+
+         },
+
+         clearCount:function(){
+           for(var i=0;i<vm.lines.length;i++){
+             console.log("I:"+i)
+             console.log("I count:"+vm.lines[i].count)
+             if(vm.lines[i].count<1){
+
+               vm.lines.splice(i,1)
+               i=i+1
+             }
+           }
+         },
+
+         refreshScreen: function(){
+
+           for(var j=0;j<vm.lines.length;j++){
+              for(var i=0;i<vm1.orderlines.length;i++){
+                 if((vm.lines[j].product.name === vm1.orderlines[i].product.name)&&(vm.lines[j].serialbatchnumber === vm1.orderlines[i].serialbatchnumber)){
+                   vm.lines[j].count = vm.lines[j].count - vm1.orderlines[i].count
+                   setTimeout(() => this.clearCount(),200)
+                 }
+               }
+             }
          }
+
+
        }
      });
+
+   let vm2 = new Vue({
+     el:'#app2',
+     data:{
+       lines:[]
+     },
+     methods: {
+       custsearch: function(event){
+         fetch("/pos/api/customersearch/"+event.target.value+"/", {
+           method: "get",
+           credentials: "same-origin",
+           headers: {
+             "X-CSRFToken": getCookie("csrftoken"),
+             "Accept": "application/json",
+             "Content-Type": "application/json"
+           }
+         })
+         .then(res => res.json())
+         .then((out) => { this.lines = out; })
+       },
+
+       addCusttoOrder: function(event,customerdata){
+         vm1.customername = customerdata.custname
+         vm1.customerphone = customerdata.custphone
+       }
+     }
+   })
 
    let vm1 = new Vue({
      el:'#app1',
@@ -58,18 +136,53 @@
        orderlines:[]
      },
      methods: {
-       addline: function(event){
-         fetch("/pos/api/productsearch/"+event.target.value+"/", {
-           method: "get",
-           credentials: "same-origin",
-           headers: {
-             "X-CSRFToken": getCookie("csrftoken"),
-             "Accept": "application/json",
-             "Content-Type": "application/json"
+       remLinefromOrder: function(event,line){
+
+         copyline= Vue.util.extend({}, line)
+         console.log(line.product.name)
+         for(var i=0;i<vm1.orderlines.length;i++){
+           if((vm1.orderlines[i].product.name == copyline.product.name) && (vm1.orderlines[i].serialbatchnumber == copyline.serialbatchnumber)){
+             vm1.orderlines[i].count--
            }
-         })
-         .then(res => res.json())
-         .then((out) => { this.lines = out; });
+         }
+
+         for(var i=0;i<vm1.orderlines.length;i++){
+           if(vm1.orderlines[i].count<1){
+             vm1.orderlines.splice(i,1)
+           }
+         }
+         setTimeout(() => this.refreshScreen(),100)
+         //setTimeout(() => vm.$refs.prodinput.keygen)
+
+       },
+       refreshScreen: function(){
+          for(var i=0;i<vm1.orderlines.length;i++){
+            for(var j=0;j<vm.lines.length;j++){
+               if((vm.lines[j].product.name == vm1.orderlines[i].product.name)&&(vm.lines[j].serialbatchnumber == vm1.orderlines[i].serialbatchnumber)){
+                 vm.lines[j].count = vm.lines[j].count - vm1.orderlines[i].count
+                 if(vm.lines[j].count<1){
+                   vm.lines.splice(j,1)
+                 }
+               }
+             }
+           }
+       }
+
+     },
+     computed: {
+       getOrderTotal: function(){
+         return  this.orderlines.reduce( (total,line) => (line.sale_price*line.count) + total,0);
+       },
+       getOrderTotalwotax: function(){
+         //return this.ordelines.reduce( (total,line) => (((line.sale_price*line.count)-((line.count*line.sale_price)/(1+(line.product.hsntax/100)))) +total,0);
+         return  this.orderlines.reduce( (total,line) => (line.sale_price*line.count)/(1+(line.product.hsntax/100)) + total,0);
+       },
+       getOrderTax: function(){
+         return this.getOrderTotal - this.getOrderTotalwotax
+
+       },
+       getNumberOfItems:function(){
+         return this.orderlines.reduce ( (total,line) => (line.count)+total,0 );
        }
      }
    });
@@ -82,7 +195,7 @@
 
 {% block maincontent %}
     <div class="row">
-       <div class="col-md-8">
+       <div class="col-md-5">
          <div id="app0" class="card card-primary">
            <div class="card-header">
              <!-- Search form -->
@@ -90,7 +203,7 @@
 
                <div class="card-tools">
                  <div class="input-group input-group-sm" style="width: 150px;">
-                   <input type="text" name="table_search" v-on:keyup.enter="prodsearch" class="form-control float-right" placeholder="Search">
+                   <input type="text" name="table_search" v-on:keyup.enter="prodsearch" class="form-control float-right" ref="prodinput" placeholder="Search">
 
                    <div class="input-group-append">
                      <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
@@ -104,35 +217,29 @@
                </div>
            </div>
 
-           <div class="card-body table-responsive p-0" style="height: 450px;">
-                           <table class="table table-head-fixed">
+           <div class="card-body table-responsive p-0" style="height: 300px;">
+
+                           <table class="table table-head-fixed table-striped">
                              <thead>
                                <tr>
                                  <th>Name</th>
-                                 <th>Serial / Batch Number</th>
-                                 <th>Store</th>
-                                 <th>Store Inventory</th>
-                                 <th>Add to Order</th>
+                                 <th>Inventory</th>
+                                 <th>Add</th>
                                </tr>
                              </thead>
                              {% verbatim %}
                              <tbody>
 
-                              <tr v-for="line in lines">
+                              <tr v-for="line in Object.assign({},lines)">
                                 <td>
-                                  {{ line.product.name }}
-                                </td>
-                                <td>
-                                  {{ line.serialbatchnumber }}
-                                </td>
-                                <td>
-                                  {{ line.store.name }}
+                                  {{ line.product.name }}<br>
+                                  <span class="badge badge-warning">{{ line.serialbatchnumber }}</span>
                                 </td>
                                 <td>
                                   {{ line.count }}
                                 </td>
                                 <td>
-                                  <a href="javascript:;"  v-on:click="greet($event,line.productname)" class="btn btn-sm btn-primary">Add</a>
+                                  <a href="javascript:;"  v-on:click="addLinetoOrder($event,line)" class="btn btn-sm btn-primary">Add</a>
                                 <td>
 
                                 </td>
@@ -145,30 +252,123 @@
                          </div>
 
            </div>
+
+           <div id="app2" class="card card-info">
+                   <div class="card-header">
+                     <h3 class="card-title">Customer Quick Create</h3>
+                     <div class="card-tools">
+                       <div class="input-group input-group-sm" style="width: 150px;">
+                         <input type="text" name="table_search" v-on:keyup.enter="custsearch" class="form-control float-right" ref="prodinput" placeholder="Search">
+
+                         <div class="input-group-append">
+                           <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
+
+                           <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                           </button>
+
+                         </div>
+
+                       </div>
+                     </div>
+                   </div>
+                   <div class="card-body table-responsive p-0" style="height: 300px;">
+                     {% verbatim %}
+                    <div class="container">
+                     <table class="table table-head-fixed table-striped">
+                      <tbody>
+
+                      <tr v-for="line in Object.assign({},lines)">
+                        <td>
+                          {{ line.custname }}<br>
+                          <span class="badge badge-warning">{{ line.custemail }}</span>
+                        </td>
+                        <td>
+                          {{ line.custphone }}
+                        </td>
+                        <td>
+                          <a href="javascript:;"  v-on:click="addCusttoOrder($event,line)" class="btn btn-sm btn-primary">Select</a>
+                        <td>
+
+                        </td>
+
+                      </tr>
+                     </tbody>
+                     </table>
+                     </div>
+                     {% endverbatim %}
+
+                   <!-- /.card-header -->
+                   <!-- form start -->
+                   <form class="form-horizontal">
+                     <div class="card-body">
+                       <div class="form-group row">
+                         <label for="custName" class="col-sm-2 col-form-label">Name</label>
+                         <div class="col-sm-10">
+                           <input type="text" class="form-control" id="custName" placeholder="Customer Name">
+                         </div>
+                       </div>
+                       <div class="form-group row">
+                         <label for="custPhone" class="col-sm-2 col-form-label">Phone</label>
+                         <div class="col-sm-10">
+                           <input type="tel" class="form-control" id="custPhone" placeholder="Phone Number">
+                         </div>
+                       </div>
+                       <div class="form-group row">
+                         <label for="custEmail" class="col-sm-2 col-form-label">E-mail</label>
+                         <div class="col-sm-10">
+                           <input type="email" class="form-control" id="custPhone" placeholder="E-mail">
+                         </div>
+                       </div>
+
+                      </div>
+
+                     <!-- /.card-body -->
+                     <div class="card-footer">
+                       <button type="submit" class="btn btn-info">Submit</button>
+
+                     </div>
+                     <!-- /.card-footer -->
+                   </form>
+                   </div>
+                 </div>
         </div>
 
 
-     <div class="col-md-4">
+     <div class="col-md-7">
        <div id="app1" class="card card-warning">
          <div class="card-header">
            <h3 class="card-title">Order Screen</h3>
          </div>
          {% verbatim %}
           <div class="card-body">
-            <div class="invoice-col">
-                              <b>Order ID:</b> {{orderid}}<br>
-                              <b>Customer Name:</b> {{customername}}<br>
-                              <b>Customer Phone:</b> {{customerphone}}
-            </div>
+            <div class="row">
+            <div class="invoice-col col-12">
+                              <div class="container">
+                                <div class="row">
+                                  <div class="col"><b>Order ID:</b> {{orderid}}</div><div class="col"><b>Order Total(w/o Taxes):</b> {{getOrderTotalwotax.toFixed(2)}}</div>
+                                </div>
+                                <div class="row">
+                                  <div class="col"><b>Customer Name:</b> {{customername}}</div><div class="col"><b>Taxes CGST:</b> {{(getOrderTax/2).toFixed(2)}}</div>
+                                </div>
+                                <div class="row">
+                                  <div class="col"><b>Customer Phone:</b> {{customerphone}}</div><div class="col"><b>Taxes SGST:</b> {{(getOrderTax/2).toFixed(2)}}</div>
+                                </div>
+                                <div class="row">
+                                  <div class="col"><b>Number Of Items:</b> {{getNumberOfItems}}</div><div class="col"><b>Order Total:</b> {{getOrderTotal.toFixed(2)}}</div>
+                                </div>
 
-            <table class="table table-head-fixed">
+                              </div>
+            </div>
+            </div>
+            <div class="row">
+            <table class="table table-head-fixed table-striped" >
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Serial / Batch Number</th>
-                  <th>Store</th>
-                  <th>Store Inventory</th>
-                  <th>Add to Order</th>
+                  <th>Quantity</th>
+                  <th>Taxes</th>
+                  <th>Price</th>
+                  <th></th>
                 </tr>
               </thead>
 
@@ -176,26 +376,34 @@
 
              <tr v-for="line in orderlines">
                <td>
-                 {{ line.productname }}
-               </td>
-               <td>
-                 {{ line.serialbatchnumber }}
-               </td>
-               <td>
-                 {{ line.storename }}
+                 {{ line.product.name }}<br>
+                 <span class="badge badge-warning">{{ line.serialbatchnumber }}</span>
                </td>
                <td>
                  {{ line.count }}
                </td>
-
                <td>
-
+                 {{ ((line.sale_price*line.count)-((line.count*line.sale_price)/(1+(line.product.hsntax/100)))).toFixed(2) }}
+               </td>
+               <td>
+                 {{ (line.sale_price*line.count).toFixed(2) }}
+               </td>
+               <td>
+                 <a href="javascript:;"  v-on:click="remLinefromOrder($event,line)" class="btn btn-sm btn-danger">-</a>
                </td>
 
              </tr>
             </tbody>
             </table>
-
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <span></span>
+                <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
+                    Payment
+                  </button>
+              </div>
+            </div>
 
 
           </div>
