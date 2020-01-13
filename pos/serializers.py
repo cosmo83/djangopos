@@ -40,11 +40,12 @@ class InvSerializer(serializers.ModelSerializer):
 class CustomerSerializer(serializers.ModelSerializer):
     custname = serializers.CharField(source='name')
     custphone = serializers.CharField(source='phonenumber')
-    custemail = serializers.CharField(source='email')
+    custemail = serializers.CharField(source='email',required=False,default='')
 
     class Meta:
         model=Customer
         fields = ('custname','custphone','custemail')
+
 
 class SaleSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product,Store,Sale,SaleLine,Inventory,PriceList,TaxesGST
+from .models import Product,Store,Sale,SaleLine,Inventory,PriceList,TaxesGST,Customer
 from import_export.admin import ImportExportModelAdmin
 from django.conf import settings
 
@@ -33,3 +33,4 @@ admin.site.register(PriceList)
 
 admin.site.register(Sale,SaleAdmin)
 admin.site.register(SaleLine)
+admin.site.register(Customer)

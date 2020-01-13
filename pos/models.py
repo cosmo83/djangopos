@@ -26,6 +26,10 @@ class Customer(models.Model):
         phonenumber = models.CharField("Phone Number",max_length=12,unique=True)
         email = models.CharField("Email Address",max_length=100,blank=True,null=True,default=True)
 
+        def __str__(self):
+            return self.phonenumber + " -- " + self.name
+
+
 class Store(Organization):
         code = models.CharField("Store ID",max_length=10,unique=True)
         addr1 = models.CharField("Address 1",max_length=200)
