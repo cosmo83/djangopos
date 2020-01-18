@@ -174,6 +174,16 @@
        orderlines:[]
      },
      methods: {
+       clearOrder:function(event){
+         vm1.orderlines=[]
+         vm1.customername=''
+         vm1.customerphone=''
+         vm1.orderid=''
+       },
+       suspendOrder:function(event){
+         console.log("Order Suspended")
+       },
+
        remLinefromOrder: function(event,line){
 
          copyline= Vue.util.extend({}, line)
@@ -377,7 +387,10 @@
        <div id="app1" class="card card-warning">
          <div class="card-header">
            <h3 class="card-title">Order Screen</h3>
-           <button type="button" class="btn btn-success float-right"><i class="far fa-remove"></i>Clear Order</button>
+           <button type="button" :disabled="!orderid" @click="suspendOrder" class="btn btn-app float-right"><i class="fas fa-pause"></i> Suspend </button>
+
+           <button type="button" :disabled="!!orderid" @click="clearOrder" class="btn btn-app float-right"><i class="fas fa-eraser"></i> Clear </button>
+
          </div>
          {% verbatim %}
           <div class="card-body">
