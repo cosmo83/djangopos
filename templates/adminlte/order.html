@@ -97,6 +97,27 @@
                  }
                }
              }
+         },
+         returnSale: function(){
+           var retobj = {
+             "store": this.store,
+            "employee": this.employee,
+           }
+           return retobj
+         },
+         newOrder:function(event){
+           fetch("/pos/api/sales/",{
+             method:"post",
+             credentials: "same-origin",
+             headers: {
+               "X-CSRFToken": getCookie("csrftoken"),
+               "Accept": "application/json",
+               "Content-Type": "application/json"
+             },
+             body: JSON.stringify(this.returnCustomer())
+           })
+           .then(res =>  { if((res.status == 201) || (res.status == 200)) { return res.json(); } else if(res.status == 400) { throw "Name and Phone Number Mandatory" } else if(res.status == 500) { throw "Phone number already exists"} else { throw "Something Went Wrong"}  }  ).then((out) => this.getSuccess(out)).catch((e) => {
+              toastr.error(e) })
          }
 
 

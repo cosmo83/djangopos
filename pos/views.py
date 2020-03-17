@@ -53,4 +53,5 @@ class SalesPageView(TemplateView):
        context = super().get_context_data(**kwargs)
        context['storename']=Store.objects.get(id=self.request.session['store_id']).name
        context['stores'] = Store.objects.filter(users=self.request.user.id)
+       context['userid'] = self.request.user.id
        return context

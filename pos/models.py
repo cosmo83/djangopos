@@ -41,6 +41,7 @@ class Store(Organization):
         is_sale_location = models.BooleanField(default=True)
         latitude = models.DecimalField("Latitude", blank=True, null=True,max_digits=22,decimal_places=10)
         longitude = models.DecimalField("Longitude", blank=True, null=True,max_digits=22,decimal_places=10)
+        is_deleted = models.BooleanField(default=False)
         def __str__(self):
             return self.code+"-"+self.name
 
