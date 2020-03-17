@@ -32,6 +32,7 @@ def productsearch_list_store(request,searchcode):
 def idoc_handler(request):
 	if request.method == 'POST':
 		print("Something got Posted")
+	return "Hello"
 
 
 class InventoryViewSet(viewsets.ModelViewSet):
