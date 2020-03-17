@@ -18,5 +18,6 @@ urlpatterns = [
     path('api/customersearch/<str:searchcode>/',views.customersearch_list,name='custsearch'),
     path('api/productstoresearch/<str:searchcode>/',views.productsearch_list_store,name='productsearchstore'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('sales/', login_required(SalesPageView.as_view()), name='sales')
+    path('sales/', login_required(SalesPageView.as_view()), name='sales'),
+    path('idoclistener/',views.idoc_handler,name='idoc_handler')
 ]

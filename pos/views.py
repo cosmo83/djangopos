@@ -29,6 +29,10 @@ def productsearch_list_store(request,searchcode):
 		serializer = InvDocSerializer(invlines[0:invlines.count()],many=True)
 		return HttpResponse(json.dumps(serializer.data))
 
+def idoc_handler(request):
+	if request.method == 'POST':
+		print("Something got Posted")
+
 
 class InventoryViewSet(viewsets.ModelViewSet):
 	queryset = Inventory.objects.all()
