@@ -1,2 +1,3 @@
-# djangopos
-Django Based POS
+# djangopos - Django Based POS
+
+##Models 
